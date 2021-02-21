@@ -190,7 +190,7 @@ class DecisionTree:
             if gini == node.gini:                
                 node.is_leaf = True
                 self.n_leaf_nodes += 1
-                self._report_node(node)
+          #      self._report_node(node)
                 return node # cannot make better split than before, so creating leaf
             node.split_feature,node.split_threshold = feature,threshold
             left,right = self._split_data(features,labels,feature,threshold)
@@ -199,7 +199,7 @@ class DecisionTree:
             return node
         else: 
             self.n_leaf_nodes += 1
-            self._report_node(node)
+       #     self._report_node(node)
             return node
         
 
@@ -210,23 +210,15 @@ class DecisionTree:
 
     
 
-    def _predict_sample(self,sample: np.array, node: Node) -> int:
+    def _predict_sample(self,sample: np.array, node: Node):
         if node.is_leaf:
-            print('found leaf node')
-            print(node.labels)
-            print(type(node.labels))
-            print(np.shape(node.labels))
             return node.majority_class
         else:
             sample_val = sample[node.split_feature]
             if sample_val <= node.split_threshold:
-                print('feature is',node.split_feature,'sample val is',sample_val,'threshold is',node.split_threshold)
-                print('going left to',node.leftChild)
-                self._predict_sample(sample,node.leftChild)
+                return self._predict_sample(sample,node.leftChild)
             else:
-                print('feature is',node.split_feature,'sample val is',sample_val,'threshold is',node.split_threshold)
-                print('going right to',node.leftChild)
-                self._predict_sample(sample,node.rightChild)
+                return self._predict_sample(sample,node.rightChild)
 
 
     def predict(self, features: np.array):
@@ -234,4 +226,3 @@ class DecisionTree:
         for obs in range(self._get_n_obs(features)):
             predictions.append(self._predict_sample(features[obs,:], self.root))
         return predictions
-        

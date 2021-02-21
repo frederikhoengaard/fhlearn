@@ -5,7 +5,7 @@ import heapq
 class Node:
     def __init__(self, 
             features: np.array, 
-            labels: np.array):                            # Instiatiates a node, O(1) time complexity
+            labels: np.array):                           
         self.features = features
         self.labels = labels
         self.leftChild = None
@@ -219,6 +219,7 @@ class DecisionTree:
                 return self._predict_sample(sample,node.leftChild)
             else:
                 return self._predict_sample(sample,node.rightChild)
+
 
 
     def predict(self, features: np.array):

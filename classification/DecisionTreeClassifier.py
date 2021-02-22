@@ -191,7 +191,7 @@ class DecisionTree:
     def _report_node(self,node):
         print('node at depth',node.depth)
         print('node is leaf?',node.is_leaf)
-        print('majority class is',flowers[node.majority_class])
+        print('majority class is',node.majority_class)
         print('contains',node.n_obs,'samples and gini is',node.gini)
         print('=====')
 

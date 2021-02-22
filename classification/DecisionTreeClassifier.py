@@ -210,17 +210,17 @@ class DecisionTree:
             if gini == node.gini:                
                 node.is_leaf = True
                 self.n_leaf_nodes += 1
-                self._report_node(node)
+             #   self._report_node(node)
                 return node # cannot make better split than before, so creating leaf
             node.split_feature,node.split_threshold = feature,threshold
-            self._report_node(node)
+         #   self._report_node(node)
             left,right = self._split_data(features,labels,feature,threshold)
             node.leftChild = self._insert_node(left[:,:-1], left[:,-1], depth + 1)
             node.rightChild = self._insert_node(right[:,:-1], right[:,-1], depth + 1)
             return node
         else: 
             self.n_leaf_nodes += 1
-            self._report_node(node)
+           # self._report_node(node)
             return node
         
 

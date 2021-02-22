@@ -37,6 +37,7 @@ class DecisionTree:
         self.max_leaf_nodes: int = None
         self.max_features: int = None
         self.seed: int = seed   
+        self.nodes_total = 0
 
             
             
@@ -132,7 +133,22 @@ class DecisionTree:
         m = m_left + m_right
         return (m_left / m) * left_gini + (m_right / m) * right_gini
     
+
+
+    def _find_next_feature_val(self,features,feature_index,val):
+        relevant_features = features[:,feature_index]
+        relevant_features.sort()
+        found_val = False
+        for i in range(len(relevant_features)):
+            if not found_val:
+                if relevant_features[i] == val:
+                    found_val = True
+            if found_val:
+                if relevant_features[i] > val:
+                    return relevant_features[i]
+        return val
      
+
 
     def _split_data(self, features: np.array, labels: np.array, feature_index: int, threshold) -> list:
         data = features[:,feature_index]
@@ -151,10 +167,10 @@ class DecisionTree:
                 left, right = self._split_data(features,labels,col,threshold)
                 CART_score = self._calc_CART(left[:,-1], right[:,-1])
                 heapq.heappush(cart_scores, (CART_score,col,threshold))
-
         cart_scores = self.get_best_carts(cart_scores)
         choice = random.choice(cart_scores)
-        return choice
+        pos_split_val = ((self._find_next_feature_val(np.copy(features),choice[1],choice[2]) - choice[2]) / 2) + choice[2]
+        return [choice[0],choice[1],pos_split_val]
 
 
 
@@ -164,17 +180,21 @@ class DecisionTree:
         return False
 
 
+
     def _decide_if_leaf(self, node):
         if not self._passes_hyperparameters(node):
             return True
         return False
 
+
+
     def _report_node(self,node):
         print('node at depth',node.depth)
         print('node is leaf?',node.is_leaf)
-        print('majority class is',node.majority_class)
+        print('majority class is',flowers[node.majority_class])
         print('contains',node.n_obs,'samples and gini is',node.gini)
         print('=====')
+
 
 
     def _insert_node(self, features: np.array, labels: np.array, depth: int) -> Node:
@@ -190,16 +210,17 @@ class DecisionTree:
             if gini == node.gini:                
                 node.is_leaf = True
                 self.n_leaf_nodes += 1
-          #      self._report_node(node)
+                self._report_node(node)
                 return node # cannot make better split than before, so creating leaf
             node.split_feature,node.split_threshold = feature,threshold
+            self._report_node(node)
             left,right = self._split_data(features,labels,feature,threshold)
             node.leftChild = self._insert_node(left[:,:-1], left[:,-1], depth + 1)
             node.rightChild = self._insert_node(right[:,:-1], right[:,-1], depth + 1)
             return node
         else: 
             self.n_leaf_nodes += 1
-       #     self._report_node(node)
+            self._report_node(node)
             return node
         
 
@@ -227,3 +248,8 @@ class DecisionTree:
         for obs in range(self._get_n_obs(features)):
             predictions.append(self._predict_sample(features[obs,:], self.root))
         return predictions
+        
+
+
+# TODO
+# maybe implement more hyperparameters

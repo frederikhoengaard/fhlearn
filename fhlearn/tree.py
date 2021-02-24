@@ -21,7 +21,7 @@ class Node:
 
         
         
-class DecisionTree:
+class DecisionTreeClassifier:
     def __init__(
             self, 
             max_depth: int = float('inf'), 

@@ -25,8 +25,7 @@ class DecisionTreeClassifier:
     def __init__(
             self, 
             max_depth: int = float('inf'), 
-            min_samples_split: int = 2,
-            seed: int = 42):
+            min_samples_split: int = 2):
         self.root: Node = None
         self.tree_depth: int = 0
         self.n_leaf_nodes: int = 0
@@ -36,7 +35,7 @@ class DecisionTreeClassifier:
         self.min_weight_fraction: float = None
         self.max_leaf_nodes: int = None
         self.max_features: int = None
-        self.seed: int = seed   
+        self.random_state: int = None   
         self.nodes_total = 0
 
             
@@ -96,7 +95,8 @@ class DecisionTreeClassifier:
 
 
     def _get_majority_class(self, labels: np.array):
-        random.seed(self.seed)
+        if self.random_state:
+            andom.seed(self.random_state)
         major_classes = []
         max_count = float('-inf')
         for key,count in self._n_class_occurence(labels).items():
@@ -161,7 +161,8 @@ class DecisionTreeClassifier:
 
 
     def find_best_split(self, features: np.array, labels: np.array) -> list: # maybe change name to something with evaluate splits
-        random.seed(self.seed)
+        if self.random_state:
+            random.seed(self.random_state)
         cart_scores = []
         for col in range(self._get_n_features(features)):
             thresholds = features[:,col]

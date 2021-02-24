@@ -2,10 +2,12 @@ import numpy as np
 import random
 import heapq
 
+
+
 class Node:
     def __init__(self, 
             features: np.array, 
-            labels: np.array):                            # Instiatiates a node, O(1) time complexity
+            labels: np.array):                            
         self.features = features
         self.labels = labels
         self.leftChild = None
@@ -215,7 +217,7 @@ class DecisionTreeClassifier:
             if gini == node.gini:                
                 node.is_leaf = True
                 self.n_leaf_nodes += 1
-                self._report_node(node)
+          #      self._report_node(node)
                 return node # cannot make better split than before, so creating leaf
             node.split_feature,node.split_threshold = feature,threshold
           #  print('split node, splitted on X' + str(feature+1) + ' <= '+str(threshold))

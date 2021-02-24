@@ -5,7 +5,7 @@ import heapq
 class Node:
     def __init__(self, 
             features: np.array, 
-            labels: np.array):                           
+            labels: np.array):                            # Instiatiates a node, O(1) time complexity
         self.features = features
         self.labels = labels
         self.leftChild = None
@@ -96,6 +96,7 @@ class DecisionTree:
 
 
     def _get_majority_class(self, labels: np.array):
+        random.seed(self.seed)
         major_classes = []
         max_count = float('-inf')
         for key,count in self._n_class_occurence(labels).items():
@@ -160,6 +161,7 @@ class DecisionTree:
 
 
     def find_best_split(self, features: np.array, labels: np.array) -> list: # maybe change name to something with evaluate splits
+        random.seed(self.seed)
         cart_scores = []
         for col in range(self._get_n_features(features)):
             thresholds = features[:,col]
@@ -168,8 +170,10 @@ class DecisionTree:
                 CART_score = self._calc_CART(left[:,-1], right[:,-1])
                 heapq.heappush(cart_scores, (CART_score,col,threshold))
         cart_scores = self.get_best_carts(cart_scores)
+     #   print('best carts',cart_scores)
         choice = random.choice(cart_scores)
         pos_split_val = ((self._find_next_feature_val(np.copy(features),choice[1],choice[2]) - choice[2]) / 2) + choice[2]
+        #print('will choose',choice[0],choice[1],pos_split_val)
         return [choice[0],choice[1],pos_split_val]
 
 
@@ -210,12 +214,15 @@ class DecisionTree:
             if gini == node.gini:                
                 node.is_leaf = True
                 self.n_leaf_nodes += 1
-             #   self._report_node(node)
+                self._report_node(node)
                 return node # cannot make better split than before, so creating leaf
             node.split_feature,node.split_threshold = feature,threshold
-         #   self._report_node(node)
+          #  print('split node, splitted on X' + str(feature+1) + ' <= '+str(threshold))
+           #self._report_node(node)
             left,right = self._split_data(features,labels,feature,threshold)
+           # print('inserting left...')
             node.leftChild = self._insert_node(left[:,:-1], left[:,-1], depth + 1)
+           # print('inserting right...')
             node.rightChild = self._insert_node(right[:,:-1], right[:,-1], depth + 1)
             return node
         else: 
@@ -227,7 +234,7 @@ class DecisionTree:
 
     def fit(self, features: np.array, labels: np.array, criterion='gini'):
         self.root = self._insert_node(features,labels,self.tree_depth)
-        print('finished fitting succesfully!')
+        #print('finished fitting succesfully!')
 
     
 
@@ -247,9 +254,4 @@ class DecisionTree:
         predictions = []
         for obs in range(self._get_n_obs(features)):
             predictions.append(self._predict_sample(features[obs,:], self.root))
-        return predictions
-        
-
-
-# TODO
-# maybe implement more hyperparameters
+        return np.array(predictions)

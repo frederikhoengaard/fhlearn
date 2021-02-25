@@ -57,7 +57,6 @@ def _compute_positives_and_negatives(
 
     for class_ in classes:
         true_positives, false_positives, true_negatives, false_negatives = 0, 0, 0, 0
-
         for i in range(len(true_labels)):
             if predicted_labels[i] == class_:
                 if true_labels[i] == class_:
@@ -69,9 +68,7 @@ def _compute_positives_and_negatives(
                     true_negatives += 1
                 else:
                     false_negatives += 1
-
         records[class_] = {'tp': true_positives, 'fp': false_positives, 'tn': true_negatives, 'fn': false_negatives, 'class_weight': weights[class_]}
-
     return records
 
 
@@ -90,7 +87,6 @@ def precision_score(
 
     records = _compute_positives_and_negatives(true_labels,predicted_labels)
     classes = records.keys()
-
     precision_dict = {}
 
     for class_ in classes:
@@ -102,19 +98,23 @@ def precision_score(
             precision_dict[class_] = tp / (sum_positives)
     
     if not average:
-        return precision_dict
+        return precision_dict # class-specific precision
     else:
         if average == 'macro':
             return sum(precision_dict.values())/len(classes)
-        elif average == 'micro':
+        elif average == 'micro':    # same as accuracy
             total_tp, total_fp = 0, 0
             for class_ in records.keys():
                 total_tp += records[class_]['tp']
                 total_fp += records[class_]['fp']
             return total_tp / (total_tp + total_fp)
-        elif average == 'weighted':
-            pass
-
+        elif average == 'weighted':     # sum of class-specific precision scores weigthed by frequency in true labels
+            sum_precision = 0
+            for class_ in precision_dict.keys():
+                sum_precision += precision_dict[class_] * records[class_]['class_weight']
+            return sum_precision
+        else:
+            raise ValueError('Invalid argument for the "average" keyword parameter')
 
 
 
@@ -125,9 +125,9 @@ y_pred = [2,2,3,4]
 
 print('fhlearn')
 #print(precision_score(y_true,y_pred))
-print(precision_score(y_true,y_pred,average='micro'))
+print(precision_score(y_true,y_pred,average='weighted'))
 
 from sklearn.metrics import precision_score as preci
 print('sklearn')
-#print(preci(y_true,y_pred,average=None,zero_division=0))
+#print(preci(y_true,y_pred,average='weighted',zero_division=0))
 print(preci(y_true,y_pred,average='weighted',zero_division=0))

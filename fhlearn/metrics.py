@@ -225,10 +225,3 @@ def f1_score(
             return sum_scores
         else:
             raise ValueError('Invalid argument for the "average" keyword parameter')
-
-
-
-y_true = [1,2,2,5,4,3]
-y_pred = [1,2,2,3,5,2]
-
-print(confusion_matrix(y_true,y_pred))

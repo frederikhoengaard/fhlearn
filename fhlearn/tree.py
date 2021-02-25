@@ -29,7 +29,8 @@ class DecisionTreeClassifier:
     def __init__(
             self, 
             max_depth: int = float('inf'), 
-            min_samples_split: int = 2
+            min_samples_split: int = 2,
+            random_state: int = None
         ):
         self.root: Node = None
         self.tree_depth: int = 0
@@ -40,7 +41,7 @@ class DecisionTreeClassifier:
         self.min_weight_fraction: float = None
         self.max_leaf_nodes: int = None
         self.max_features: int = None
-        self.random_state: int = None   
+        self.random_state: int = random_state   
         self.nodes_total = 0
 
             
@@ -76,7 +77,7 @@ class DecisionTreeClassifier:
 
     
     
-    def calc_gini(self, labels: np.array) -> float:
+    def _calc_gini(self, labels: np.array) -> float:
         """
         Calculates gini as defined in HML p. 171, eq 6.2
 
@@ -94,7 +95,7 @@ class DecisionTreeClassifier:
     
     
     
-    def get_best_carts(self, scores: list) -> list:
+    def _get_best_carts(self, scores: list) -> list:
         if not list:
             return ValueError('No CART scores supplied')
         best = min(scores)[0]
@@ -148,7 +149,7 @@ class DecisionTreeClassifier:
         where m refers to number of samples and G to gini score
         """
         
-        left_gini, right_gini = self.calc_gini(left_labels), self.calc_gini(right_labels)
+        left_gini, right_gini = self._calc_gini(left_labels), self._calc_gini(right_labels)
         m_left, m_right = self._get_n_obs(left_labels), self._get_n_obs(right_labels)
         m = m_left + m_right
         return (m_left / m) * left_gini + (m_right / m) * right_gini
@@ -204,7 +205,7 @@ class DecisionTreeClassifier:
                 left, right = self._split_data(features,labels,col,threshold)
                 CART_score = self._calc_CART(left[:,-1], right[:,-1])
                 heapq.heappush(cart_scores, (CART_score,col,threshold))
-        cart_scores = self.get_best_carts(cart_scores)
+        cart_scores = self._get_best_carts(cart_scores)
         choice = random.choice(cart_scores)
         pos_split_val = ((self._find_next_feature_val(np.copy(features),choice[1],choice[2]) - choice[2]) / 2) + choice[2]
         return [choice[0],choice[1],pos_split_val]
@@ -233,7 +234,7 @@ class DecisionTreeClassifier:
         ) -> Node:
         node = Node(features,labels)
         node.depth = depth
-        node.gini = self.calc_gini(labels)
+        node.gini = self._calc_gini(labels)
         node.class_probabilities = self._get_class_probabilities
         node.n_obs = self._get_n_obs(labels)
         node.is_leaf = self._decide_if_leaf(node)
@@ -261,7 +262,7 @@ class DecisionTreeClassifier:
             labels: np.array, 
             criterion='gini'
         ):
-        self.root = self._insert_node(features,labels,self.tree_depth)
+        self.root = self._insert_node(features, labels, self.tree_depth)
 
     
 

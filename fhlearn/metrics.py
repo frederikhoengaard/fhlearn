@@ -89,8 +89,8 @@ def precision_score(
     for class_ in classes:
         tp, fp = records[class_]['tp'], records[class_]['fp']
         sum_positives = tp + fp
-        if sum_positives == 0: # for zero divison
-            precision_dict[class_] = 0
+        if sum_positives == 0: # for handling zero-divison problem if no positives
+            precision_dict[class_] = zero_divison
         else:
             precision_dict[class_] = tp / (sum_positives)
     
@@ -112,6 +112,12 @@ def precision_score(
             return sum_precision
         else:
             raise ValueError('Invalid argument for the "average" keyword parameter')
+
+
+
+    def recall_score()
+
+
 
 
 

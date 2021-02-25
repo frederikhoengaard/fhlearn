@@ -9,7 +9,7 @@ class Node:
             self, 
             features: np.array, 
             labels: np.array
-            ):                            
+        ):                            
         self.features = features
         self.labels = labels
         self.leftChild = None
@@ -30,7 +30,7 @@ class DecisionTreeClassifier:
             self, 
             max_depth: int = float('inf'), 
             min_samples_split: int = 2
-            ):
+        ):
         self.root: Node = None
         self.tree_depth: int = 0
         self.n_leaf_nodes: int = 0
@@ -125,23 +125,33 @@ class DecisionTreeClassifier:
 
     
     
-    
-    def _calc_CART(self, left_labels: np.array, right_labels: np.array) -> float: 
+    def _calc_CART(
+            self, 
+            left_labels: np.array, 
+            right_labels: np.array
+        ) -> float: 
+        
         """
         Calculates CART as defined in HML p. 171, eq 6.2
         
-        J(k,t_k) = \frac{m_{left}}{m} G_{left} + \frac{m_{right}}{m} G_{right}
+        J(k,t_k) = (m_left / m) * G_left + (m_right / m) * G_right
+
+        where m refers to number of samples and G to gini score
         """
-        left_gini = self.calc_gini(left_labels)
-        right_gini = self.calc_gini(right_labels)
-        m_left = self._get_n_obs(left_labels)
-        m_right = self._get_n_obs(right_labels)
+        
+        left_gini, right_gini = self.calc_gini(left_labels), self.calc_gini(right_labels)
+        m_left, m_right = self._get_n_obs(left_labels), self._get_n_obs(right_labels)
         m = m_left + m_right
         return (m_left / m) * left_gini + (m_right / m) * right_gini
     
 
 
-    def _find_next_feature_val(self,features,feature_index,val):
+    def _find_next_feature_val(
+            self,
+            features,
+            feature_index,
+            val
+        ) -> float:
         relevant_features = features[:,feature_index]
         relevant_features.sort()
         found_val = False
@@ -162,7 +172,7 @@ class DecisionTreeClassifier:
             labels: np.array, 
             feature_index: int, 
             threshold: float
-            ) -> list:
+        ) -> list:
         data = features[:,feature_index]
         mask = data <= threshold
         left = np.c_[features,labels][mask]
@@ -171,7 +181,11 @@ class DecisionTreeClassifier:
 
 
 
-    def find_best_split(self, features: np.array, labels: np.array) -> list: # maybe change name to something with evaluate splits
+    def _find_best_split(
+            self, 
+            features: np.array, 
+            labels: np.array
+        ) -> list: 
         if self.random_state:
             random.seed(self.random_state)
         cart_scores = []
@@ -182,10 +196,8 @@ class DecisionTreeClassifier:
                 CART_score = self._calc_CART(left[:,-1], right[:,-1])
                 heapq.heappush(cart_scores, (CART_score,col,threshold))
         cart_scores = self.get_best_carts(cart_scores)
-     #   print('best carts',cart_scores)
         choice = random.choice(cart_scores)
         pos_split_val = ((self._find_next_feature_val(np.copy(features),choice[1],choice[2]) - choice[2]) / 2) + choice[2]
-        #print('will choose',choice[0],choice[1],pos_split_val)
         return [choice[0],choice[1],pos_split_val]
 
 
@@ -204,16 +216,12 @@ class DecisionTreeClassifier:
 
 
 
-    def _report_node(self,node):
-        print('node at depth',node.depth)
-        print('node is leaf?',node.is_leaf)
-        print('majority class is',node.majority_class)
-        print('contains',node.n_obs,'samples and gini is',node.gini)
-        print('=====')
-
-
-
-    def _insert_node(self, features: np.array, labels: np.array, depth: int) -> Node:
+     def _insert_node(
+            self, 
+            features: np.array, 
+            labels: np.array, 
+            depth: int
+        ) -> Node:
         node = Node(features,labels)
         node.depth = depth
         node.gini = self.calc_gini(labels)
@@ -222,35 +230,37 @@ class DecisionTreeClassifier:
         node.is_leaf = self._decide_if_leaf(node)
         node.majority_class = self._get_majority_class(labels)
         if not node.is_leaf: # means we will try splitting
-            gini,feature,threshold = self.find_best_split(features,labels)
+            gini,feature,threshold = self._find_best_split(features,labels)
             if gini == node.gini:                
                 node.is_leaf = True
                 self.n_leaf_nodes += 1
-          #      self._report_node(node)
                 return node # cannot make better split than before, so creating leaf
             node.split_feature,node.split_threshold = feature,threshold
-          #  print('split node, splitted on X' + str(feature+1) + ' <= '+str(threshold))
-           #self._report_node(node)
             left,right = self._split_data(features,labels,feature,threshold)
-           # print('inserting left...')
             node.leftChild = self._insert_node(left[:,:-1], left[:,-1], depth + 1)
-           # print('inserting right...')
             node.rightChild = self._insert_node(right[:,:-1], right[:,-1], depth + 1)
             return node
         else: 
             self.n_leaf_nodes += 1
-           # self._report_node(node)
             return node
         
 
 
-    def fit(self, features: np.array, labels: np.array, criterion='gini'):
+    def fit(
+            self, 
+            features: np.array, 
+            labels: np.array, 
+            criterion='gini'
+        ):
         self.root = self._insert_node(features,labels,self.tree_depth)
-        #print('finished fitting succesfully!')
 
     
 
-    def _predict_sample(self,sample: np.array, node: Node):
+    def _predict_sample(
+            self,
+            sample: np.array, 
+            node: Node
+        ):
         if node.is_leaf:
             return node.majority_class
         else:
@@ -262,8 +272,8 @@ class DecisionTreeClassifier:
 
 
 
-    def predict(self, features: np.array):
+    def predict(self, features: np.array) -> np.array:
         predictions = []
         for obs in range(self._get_n_obs(features)):
-            predictions.append(self._predict_sample(features[obs,:], self.root))
+            predictions.append(self._predict_sample(features[obs,:],self.root))
         return np.array(predictions)

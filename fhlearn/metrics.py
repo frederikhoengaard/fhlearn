@@ -92,7 +92,7 @@ def precision_score(
         if sum_positives == 0: # for handling zero-divison problem if no positives
             precision_dict[class_] = zero_divison
         else:
-            precision_dict[class_] = tp / (sum_positives)
+            precision_dict[class_] = tp / sum_positives
     
     if not average:
         return precision_dict # class-specific precision
@@ -115,22 +115,68 @@ def precision_score(
 
 
 
-    def recall_score()
+def recall_score(
+        true_labels,
+        predicted_labels,
+        average=None,
+        zero_division=0
+    ):
+
+    n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
+
+    if n_samples_true != n_samples_predicted:
+        raise ValueError()
+
+    records = _compute_positives_and_negatives(true_labels,predicted_labels)
+    classes = records.keys()
+    recall_dict = {}
+
+    for class_ in classes:
+        tp, fn = records[class_]['tp'], records[class_]['fn']
+        potential_positives = tp + fn
+        if potential_positives == 0: # for handling zero-divison problem if no positives
+            recall_dict[class_] = zero_division
+        else:
+            recall_dict[class_] = tp / potential_positives
+
+    if not average:
+        return recall_dict
+    else:
+        if average == 'macro':
+            return sum(recall_dict.values())/len(classes)
+        elif average == 'micro':
+            total_tp, total_fn = 0, 0
+            for class_ in records.keys():
+                total_tp += records[class_]['tp']
+                total_fn += records[class_]['fn']
+            return total_tp / (total_tp + total_fn)
+        elif average == 'weighted':     # sum of class-specific recall scores weigthed by frequency in true labels
+            sum_recall = 0
+            for class_ in recall_dict.keys():
+                sum_recall += recall_dict[class_] * records[class_]['class_weight']
+            return sum_recall
+        else:
+            raise ValueError('Invalid argument for the "average" keyword parameter')
 
 
 
 
 
 
-y_true = [1,2,3,4]
 
-y_pred = [2,2,3,4]
+
+y_true = [1,2,3,4,2]
+
+y_pred = [2,2,3,4,3]
 
 print('fhlearn')
 #print(precision_score(y_true,y_pred))
-print(precision_score(y_true,y_pred,average='weighted'))
+
+avg = None
+
+print(precision_score(y_true,y_pred,average=avg))
 
 from sklearn.metrics import precision_score as preci
 print('sklearn')
 #print(preci(y_true,y_pred,average='weighted',zero_division=0))
-print(preci(y_true,y_pred,average='weighted',zero_division=0))
+print(preci(y_true,y_pred,average=avg,zero_division=0))

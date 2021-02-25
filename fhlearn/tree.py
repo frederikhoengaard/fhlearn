@@ -101,7 +101,7 @@ class DecisionTreeClassifier:
 
     def _get_majority_class(self, labels: np.array):
         if self.random_state:
-            andom.seed(self.random_state)
+            random.seed(self.random_state)
         major_classes = []
         max_count = float('-inf')
         for key,count in self._n_class_occurence(labels).items():

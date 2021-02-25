@@ -77,6 +77,15 @@ class DecisionTreeClassifier:
     
     
     def calc_gini(self, labels: np.array) -> float:
+        """
+        Calculates gini as defined in HML p. 171, eq 6.2
+
+        G_i = 1 - SUM p_{i,k}^2
+
+        where p_{i,k}^2 is the ratio of instances of class k to the total
+        number of training samples in node i. 
+        """
+        
         gini = 1
         occurrences = self._n_class_occurence(labels)
         for classname in self._get_classes(labels):
@@ -216,7 +225,7 @@ class DecisionTreeClassifier:
 
 
 
-     def _insert_node(
+    def _insert_node(
             self, 
             features: np.array, 
             labels: np.array, 

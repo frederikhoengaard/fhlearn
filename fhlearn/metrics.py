@@ -74,7 +74,7 @@ def precision_score(
         true_labels,
         predicted_labels,
         average=None,
-        zero_divison=0
+        zero_division=0
     ):
 
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
@@ -90,7 +90,7 @@ def precision_score(
         tp, fp = records[class_]['tp'], records[class_]['fp']
         sum_positives = tp + fp
         if sum_positives == 0: # for handling zero-divison problem if no positives
-            precision_dict[class_] = zero_divison
+            precision_dict[class_] = zero_division
         else:
             precision_dict[class_] = tp / sum_positives
     
@@ -160,23 +160,45 @@ def recall_score(
 
 
 
+def f1_score(
+        true_labels,
+        predicted_labels,
+        average=None,
+        zero_division=0
+    ):
 
+    n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
 
+    if n_samples_true != n_samples_predicted:
+        raise ValueError()
 
-
-
-y_true = [1,2,3,4,2]
-
-y_pred = [2,2,3,4,3]
-
-print('fhlearn')
-#print(precision_score(y_true,y_pred))
-
-avg = None
-
-print(precision_score(y_true,y_pred,average=avg))
-
-from sklearn.metrics import precision_score as preci
-print('sklearn')
-#print(preci(y_true,y_pred,average='weighted',zero_division=0))
-print(preci(y_true,y_pred,average=avg,zero_division=0))
+    precision = precision_score(true_labels,predicted_labels,zero_division=zero_division)
+    recall = recall_score(true_labels,predicted_labels,zero_division=zero_division)
+    weights = _get_class_weights(true_labels)
+    f1_dict = {}
+    
+    for class_ in precision.keys():
+        sum_recall_precision = precision[class_] + recall[class_]
+        if sum_recall_precision == 0:
+            f1_dict[class_] = zero_division
+        else:
+            f1_dict[class_] = 2 * (precision[class_] * recall[class_]) / sum_recall_precision
+    
+    if not average:
+        return f1_dict
+    else:
+        if average == 'macro':
+            sum_scores = 0
+            for score in f1_dict.values():
+                sum_scores += score
+            return sum_scores / len(f1_dict)
+        elif average == 'micro':
+            precision, recall = precision_score(true_labels,predicted_labels,average=average), recall_score(true_labels,predicted_labels,average=average)
+            return 2 * (precision * recall) / (precision + recall)
+        elif average == 'weighted':
+            sum_scores = 0
+            for class_ in f1_dict.keys():
+                sum_scores += f1_dict[class_] * weights[class_]
+            return sum_scores
+        else:
+            raise ValueError('Invalid argument for the "average" keyword parameter')

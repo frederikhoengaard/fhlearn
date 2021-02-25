@@ -5,9 +5,11 @@ import heapq
 
 
 class Node:
-    def __init__(self, 
+    def __init__(
+            self, 
             features: np.array, 
-            labels: np.array):                            
+            labels: np.array
+            ):                            
         self.features = features
         self.labels = labels
         self.leftChild = None
@@ -27,7 +29,8 @@ class DecisionTreeClassifier:
     def __init__(
             self, 
             max_depth: int = float('inf'), 
-            min_samples_split: int = 2):
+            min_samples_split: int = 2
+            ):
         self.root: Node = None
         self.tree_depth: int = 0
         self.n_leaf_nodes: int = 0
@@ -153,7 +156,13 @@ class DecisionTreeClassifier:
      
 
 
-    def _split_data(self, features: np.array, labels: np.array, feature_index: int, threshold) -> list:
+    def _split_data(
+            self, 
+            features: np.array, 
+            labels: np.array, 
+            feature_index: int, 
+            threshold: float
+            ) -> list:
         data = features[:,feature_index]
         mask = data <= threshold
         left = np.c_[features,labels][mask]

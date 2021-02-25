@@ -27,10 +27,8 @@ def accuracy_score(
 
 
 def _get_class_weights(labels) -> dict:
-
     classes = set(labels)
     class_weights = {}
-
     class_counts = {}
 
     for value in labels:
@@ -41,7 +39,6 @@ def _get_class_weights(labels) -> dict:
 
     for class_ in classes:
         class_weights[class_] = class_counts[class_] / len(labels)
-
     return class_weights
 
 

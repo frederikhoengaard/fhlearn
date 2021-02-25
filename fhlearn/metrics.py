@@ -70,6 +70,29 @@ def _compute_positives_and_negatives(
 
 
 
+def confusion_matrix(
+        true_labels,
+        predicted_labels
+    ) -> np.array:
+    """
+    Returns confusion matrix with rows as predicted labels and columns as true labels
+    """
+
+    n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
+
+    if n_samples_true != n_samples_predicted:
+        raise ValueError()
+
+    n_classes = len(set(true_labels))
+    matrix = np.zeros((n_classes,n_classes))
+    
+    for i in range(len(true_labels)):
+        true_label = true_labels[i]
+        predicted_label = predicted_labels[i]
+        matrix[predicted_label-1][true_label-1] += 1
+    return matrix
+
+
 def precision_score(
         true_labels,
         predicted_labels,
@@ -202,3 +225,10 @@ def f1_score(
             return sum_scores
         else:
             raise ValueError('Invalid argument for the "average" keyword parameter')
+
+
+
+y_true = [1,2,2,5,4,3]
+y_pred = [1,2,2,3,5,2]
+
+print(confusion_matrix(y_true,y_pred))

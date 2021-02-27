@@ -175,7 +175,7 @@ class DecisionTreeClassifier:
         mask = data <= threshold
         left = np.c_[features,labels][mask]
         right = np.c_[features,labels][~mask]
-        return [left,right]
+        return (left,right)
 
 
 
@@ -195,12 +195,12 @@ class DecisionTreeClassifier:
                 CART_score = self._calc_CART(left[:,-1], right[:,-1])
                 if CART_score < best_score:
                     best_score = CART_score
-                    cart_scores = [tuple([CART_score,col,threshold])]
+                    cart_scores = [(CART_score,col,threshold)]
                 elif CART_score == best_score:
-                    cart_scores.append(tuple([CART_score,col,threshold]))
+                    cart_scores.append((CART_score,col,threshold))
         choice = random.choice(cart_scores)
         pos_split_val = ((self._find_next_feature_val(np.copy(features),choice[1],choice[2]) - choice[2]) / 2) + choice[2]
-        return [choice[0],choice[1],pos_split_val]
+        return (choice[0],choice[1],pos_split_val)
 
 
 

@@ -232,6 +232,7 @@ class DecisionTreeClassifier:
             labels: np.array, 
             depth: int
         ) -> Node:
+        self.nodes_total += 1
         node = Node(features,labels)
         node.depth = depth
         node.gini = self._calc_gini(labels)

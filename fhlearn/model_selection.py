@@ -35,11 +35,7 @@ def train_test_split(data: np.array, test_size: float = None, train_size: float 
         test_size = 0.2
 
 
-    """if not test_size:
-        if not train_size:
-            test_size = 0.2
-        else:
-
+    """
     
     shuffled_indices = np.random.permutation(len(data)) 
     test_set_size = int(len(data) * test_ratio) 
@@ -48,5 +44,3 @@ def train_test_split(data: np.array, test_size: float = None, train_size: float 
     return data.iloc[train_indices], data.iloc[test_indices]"""
 
 
-train_test_split('whatevs', train_size=0.8)
-#print(_validate_ratios([0.2,0.8]))

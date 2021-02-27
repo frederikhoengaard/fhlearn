@@ -1,6 +1,5 @@
 import numpy as np
 import random
-import heapq
 
 
 
@@ -258,7 +257,7 @@ class DecisionTreeClassifier:
             features: np.array, 
             labels: np.array, 
             criterion='gini'
-        ):
+        ) -> None:
         self.root = self._insert_node(features, labels, self.tree_depth)
 
     

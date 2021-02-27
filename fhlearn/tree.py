@@ -22,6 +22,7 @@ class Node:
         self.majority_class = None
         self.class_probabilities: dict = None
         self.n_obs: int = None
+        self.id = None
 
         
         
@@ -42,7 +43,8 @@ class DecisionTreeClassifier:
         self.max_leaf_nodes: int = None
         self.max_features: int = None
         self.random_state: int = random_state   
-        self.nodes_total = 0
+        self.nodes_total: int = 0
+        self.nodes: list = []
 
             
             
@@ -234,6 +236,7 @@ class DecisionTreeClassifier:
         ) -> Node:
         self.nodes_total += 1
         node = Node(features,labels)
+        node.id = self.nodes_total
         node.depth = depth
         node.gini = self._calc_gini(labels)
         node.class_probabilities = self._get_class_probabilities
@@ -245,14 +248,17 @@ class DecisionTreeClassifier:
             if gini == node.gini:                
                 node.is_leaf = True
                 self.n_leaf_nodes += 1
+                self.nodes.append(node)
                 return node # cannot make better split than before, so creating leaf
             node.split_feature,node.split_threshold = feature,threshold
+            self.nodes.append(node)
             left,right = self._split_data(features,labels,feature,threshold)
             node.leftChild = self._insert_node(left[:,:-1], left[:,-1], depth + 1)
             node.rightChild = self._insert_node(right[:,:-1], right[:,-1], depth + 1)
             return node
         else: 
             self.n_leaf_nodes += 1
+            self.nodes.append(node)
             return node
         
 
@@ -288,3 +294,4 @@ class DecisionTreeClassifier:
         for obs in range(self._get_n_obs(features)):
             predictions.append(self._predict_sample(features[obs,:],self.root))
         return np.array(predictions)
+

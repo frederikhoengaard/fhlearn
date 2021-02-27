@@ -223,7 +223,6 @@ class DecisionTreeClassifier:
             labels: np.array, 
             depth: int
         ) -> Node:
-        self.nodes_total += 1
         node = Node(features,labels)
         node.id = self.nodes_total
         node.depth = depth
@@ -232,6 +231,7 @@ class DecisionTreeClassifier:
         node.n_obs = self._get_n_obs(labels)
         node.is_leaf = self._decide_if_leaf(node)
         node.majority_class = self._get_majority_class(labels)
+        self.nodes_total += 1
         if not node.is_leaf: # means we will try splitting
             gini,feature,threshold = self._find_best_split(features,labels)
             if gini == node.gini:                

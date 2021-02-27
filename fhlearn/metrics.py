@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def accuracy_score(
         true_labels,
         predicted_labels,
@@ -18,12 +17,11 @@ def accuracy_score(
     for i in range(len(true_labels)):
         if  true_labels[i] == predicted_labels[i]:
             n_correct_predictions += 1
-
+    
     if normalize:
         return n_correct_predictions / n_samples_true
     else:
         return n_correct_predictions
-
 
 
 def _get_class_weights(labels) -> dict:
@@ -36,11 +34,10 @@ def _get_class_weights(labels) -> dict:
             class_counts[value] = 1
         else:
             class_counts[value] += 1
-
+    
     for class_ in classes:
         class_weights[class_] = class_counts[class_] / len(labels)
     return class_weights
-
 
 
 def _compute_positives_and_negatives(
@@ -69,13 +66,14 @@ def _compute_positives_and_negatives(
     return records
 
 
-
 def confusion_matrix(
         true_labels,
         predicted_labels
     ) -> np.array:
     """
-    Returns confusion matrix with rows as predicted labels and columns as true labels
+    Returns confusion matrix with rows as predicted labels and columns as true labels.
+
+    Currently requires that n classes be encoded as 0,n-1. Otherwise it will break.
     """
 
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
@@ -91,7 +89,6 @@ def confusion_matrix(
         predicted_label = predicted_labels[i]
         matrix[predicted_label-1][true_label-1] += 1
     return matrix
-
 
 
 def precision_score(
@@ -138,7 +135,6 @@ def precision_score(
             raise ValueError('Invalid argument for the "average" keyword parameter')
 
 
-
 def recall_score(
         true_labels,
         predicted_labels,
@@ -183,7 +179,6 @@ def recall_score(
             raise ValueError('Invalid argument for the "average" keyword parameter')
 
 
-
 def f1_score(
         true_labels,
         predicted_labels,
@@ -195,11 +190,11 @@ def f1_score(
 
     if n_samples_true != n_samples_predicted:
         raise ValueError()
-
+    
     precision = precision_score(true_labels,predicted_labels,zero_division=zero_division)
     recall = recall_score(true_labels,predicted_labels,zero_division=zero_division)
     weights = _get_class_weights(true_labels)
-    f1_dict = {}
+    f1_dict = {}  
     
     for class_ in precision.keys():
         sum_recall_precision = precision[class_] + recall[class_]

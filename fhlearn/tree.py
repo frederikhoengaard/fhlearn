@@ -95,20 +95,6 @@ class DecisionTreeClassifier:
             gini -= (occurrences[classname] / len(labels)) ** 2
         return gini 
     
-    
-    
-    def _get_best_carts(self, scores: list) -> list:
-        if not list:
-            return ValueError('No CART scores supplied')
-        best = min(scores)[0]
-        best_scores = []
-        for score in scores:
-            if score[0] == best:
-                best_scores.append(score)
-            else:
-                break
-        return best_scores
-    
 
 
     def _get_majority_class(self, labels: np.array):
@@ -200,14 +186,18 @@ class DecisionTreeClassifier:
         ) -> list: 
         if self.random_state:
             random.seed(self.random_state)
+        best_score = 1
         cart_scores = []
         for col in range(self._get_n_features(features)):
             thresholds = features[:,col]
             for threshold in thresholds:
                 left, right = self._split_data(features,labels,col,threshold)
                 CART_score = self._calc_CART(left[:,-1], right[:,-1])
-                heapq.heappush(cart_scores, (CART_score,col,threshold))
-        cart_scores = self._get_best_carts(cart_scores)
+                if CART_score < best_score:
+                    best_score = CART_score
+                    cart_scores = [tuple([CART_score,col,threshold])]
+                elif CART_score == best_score:
+                    cart_scores.append(tuple([CART_score,col,threshold]))
         choice = random.choice(cart_scores)
         pos_split_val = ((self._find_next_feature_val(np.copy(features),choice[1],choice[2]) - choice[2]) / 2) + choice[2]
         return [choice[0],choice[1],pos_split_val]

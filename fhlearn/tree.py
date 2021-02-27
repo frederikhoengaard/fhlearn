@@ -2,7 +2,6 @@ import numpy as np
 import random
 
 
-
 class Node:
     def __init__(
             self, 
@@ -23,8 +22,7 @@ class Node:
         self.n_obs: int = None
         self.id = None
 
-        
-        
+             
 class DecisionTreeClassifier:
     def __init__(
             self, 
@@ -44,29 +42,19 @@ class DecisionTreeClassifier:
         self.random_state: int = random_state   
         self.nodes_total: int = 0
         self.nodes: list = []
-
-            
-            
+        
     def _number_of_classes(self, labels: np.array) -> int:
         return len(np.unique(labels))
-    
-    
     
     def _get_n_obs(self, data: np.array) -> int:
         return np.shape(data)[0]
   
-
-
     def _get_classes(self, labels: np.array) -> list:
         return list(set(labels))
-
-    
-    
+ 
     def _get_n_features(self, features: np.array) -> int:
         return np.shape(features)[1]
   
-
-
     def _n_class_occurence(self, labels: np.array) -> dict:
         counts = {}
         for obs in labels:
@@ -76,8 +64,6 @@ class DecisionTreeClassifier:
                 counts[obs] += 1     
         return counts
 
-    
-    
     def _calc_gini(self, labels: np.array) -> float:
         """
         Calculates gini as defined in HML p. 171, eq 6.2
@@ -94,8 +80,6 @@ class DecisionTreeClassifier:
             gini -= (occurrences[classname] / len(labels)) ** 2
         return gini 
     
-
-
     def _get_majority_class(self, labels: np.array):
         if self.random_state:
             random.seed(self.random_state)
@@ -111,8 +95,6 @@ class DecisionTreeClassifier:
                 continue
         return random.choice(major_classes)
     
-
-
     def _get_class_probabilities(self, labels: np.array) -> dict:
         probabilities = {}
         n_obs = self._get_n_obs(labels)
@@ -120,8 +102,6 @@ class DecisionTreeClassifier:
             probabilities[key] = count / n_obs
         return probabilities
 
-    
-    
     def _calc_CART(
             self, 
             left_labels: np.array, 
@@ -141,8 +121,6 @@ class DecisionTreeClassifier:
         m = m_left + m_right
         return (m_left / m) * left_gini + (m_right / m) * right_gini
     
-
-
     def _find_next_feature_val(
             self,
             features,
@@ -161,8 +139,6 @@ class DecisionTreeClassifier:
                     return relevant_features[i]
         return val
      
-
-
     def _split_data(
             self, 
             features: np.array, 
@@ -175,8 +151,6 @@ class DecisionTreeClassifier:
         left = np.c_[features,labels][mask]
         right = np.c_[features,labels][~mask]
         return (left,right)
-
-
 
     def _find_best_split(
             self, 
@@ -201,21 +175,15 @@ class DecisionTreeClassifier:
         pos_split_val = ((self._find_next_feature_val(np.copy(features),choice[1],choice[2]) - choice[2]) / 2) + choice[2]
         return (choice[0],choice[1],pos_split_val)
 
-
-
     def _passes_hyperparameters(self, node: Node) -> bool:
         if node.depth < self.max_depth and node.n_obs >= self.min_samples_split and node.gini != 0:
             return True
         return False
 
-
-
     def _decide_if_leaf(self, node):
         if not self._passes_hyperparameters(node):
             return True
         return False
-
-
 
     def _insert_node(
             self, 
@@ -250,8 +218,6 @@ class DecisionTreeClassifier:
             self.nodes.append(node)
             return node
         
-
-
     def fit(
             self, 
             features: np.array, 
@@ -259,8 +225,6 @@ class DecisionTreeClassifier:
             criterion='gini'
         ) -> None:
         self.root = self._insert_node(features, labels, self.tree_depth)
-
-    
 
     def _predict_sample(
             self,
@@ -275,8 +239,6 @@ class DecisionTreeClassifier:
                 return self._predict_sample(sample,node.leftChild)
             else:
                 return self._predict_sample(sample,node.rightChild)
-
-
 
     def predict(self, features: np.array) -> np.array:
         predictions = []

@@ -1,4 +1,6 @@
-# fh-learn 0.1.0
+# fh-learn
+
+## version 0.1.0
 
 ## Machine learning in Python
 

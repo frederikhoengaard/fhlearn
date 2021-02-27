@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class LinearRegressionModel: # HML p 106
+class LinearRegression: # HML p 106
     def __init__(self):
         self.theta = None
         self.X = None

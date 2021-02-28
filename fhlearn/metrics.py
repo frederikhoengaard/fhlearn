@@ -221,3 +221,13 @@ def f1_score(
             return sum_scores
         else:
             raise ValueError('Invalid argument for the "average" keyword parameter')
+
+
+def mean_squared_error(true_targets: np.array, predicted_targets: np.array, squared=True):
+    if not np.shape(true_targets) == np.shape(predicted_targets):
+        raise ValueError('Input arrays not of equal dimensions')
+
+    if squared:
+        return np.mean((true_targets - predicted_targets) ** 2) 
+    else:
+        return np.mean(true_targets - predicted_targets) 

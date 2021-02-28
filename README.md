@@ -9,11 +9,20 @@ fh-learn is a proprietary machine learning library for developed in Python. It h
 
 ### Models
 
-* DecisionTreeClassifier
+* [LinearRegression](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/linear_model.py)
+* [DecisionTreeClassifier](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/tree.py)
 
 ### Model selection 
 
 * [train_test_split](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/model_selection.py)
 
 ### Pre-processing
-* StandardScaler
+* [StandardScaler](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/preprocessing.py)
+
+### Metrics
+
+* accuracy_score
+* precision_score
+* recall_score
+* f1_score
+* confusion_matrix

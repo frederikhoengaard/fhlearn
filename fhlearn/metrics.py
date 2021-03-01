@@ -223,11 +223,24 @@ def f1_score(
             raise ValueError('Invalid argument for the "average" keyword parameter')
 
 
+def sum_squared_errors(true_targets: np.array, predicted_targets: np.array):
+    return np.sum((true_targets - np.mean(true_targets)) ** 2)
+
+
+def sum_squared_residuals(true_targets: np.array, predicted_targets: np.array):
+    return np.sum((true_targets - predicted_targets) ** 2)
+
+
 def mean_squared_error(true_targets: np.array, predicted_targets: np.array, squared=True):
     if not np.shape(true_targets) == np.shape(predicted_targets):
         raise ValueError('Input arrays not of equal dimensions')
 
     if squared:
+       #return np.mean(sum_squared_errors(true_targets,predicted_targets))
         return np.mean((true_targets - predicted_targets) ** 2) 
     else:
         return np.mean(true_targets - predicted_targets) 
+
+
+def r2_score(true_targets: np.array, predicted_targets: np.array) -> float:
+    return 1 - (sum_squared_residuals(true_targets,predicted_targets) / sum_squared_errors(true_targets,predicted_targets))

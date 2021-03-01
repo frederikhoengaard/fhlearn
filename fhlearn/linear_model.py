@@ -7,7 +7,8 @@ class LinearRegression: # HML p 106
         self.best_theta = None
         self.intercept_ = None
         self.coef_ = None
-
+        self.is_fitted = False
+        
     def fit(self, features: np.array, targets: np.array) -> None:
         X = np.copy(features)
         y = np.copy(targets)

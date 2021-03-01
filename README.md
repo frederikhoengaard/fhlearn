@@ -13,7 +13,7 @@ fh-learn is a proprietary machine learning library for developed in Python. It h
 * LogisticRegression (in development for version 0.2.0)
 
 * LinearDiscriminantAnalysis (in development for version 0.2.0)
-* QuadradticDiscriminantAnalysis (in development for version 0.2.0)
+* QuadraticDiscriminantAnalysis (in development for version 0.2.0)
 
 * [DecisionTreeClassifier](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/tree.py)
 * RandomForestClassifier (in development for version 0.2.0)

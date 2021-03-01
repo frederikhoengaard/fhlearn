@@ -16,7 +16,21 @@ def _validate_ratios(ratios: list) -> bool:
     return True
 
 
-def train_test_split(data: np.array, test_size: float = None, train_size: float = None, random_state: int = None):
+def train_test_split(
+        data: np.array, 
+        targets: np.array = None, 
+        test_size: float = None, 
+        train_size: float = None, 
+        random_state: int = None, 
+        shuffle: bool = True, 
+        tratify: bool = False
+    ) -> list:
+    if targets is not None:
+        if np.shape(data)[0] == np.shape(targets)[0]:
+            data = np.c_[data,targets]
+        else:
+            raise ValueError('Feature and target arrays not containing equal number of samples.')
+
     if random_state:
         np.random.seed(random_state)
 
@@ -34,13 +48,16 @@ def train_test_split(data: np.array, test_size: float = None, train_size: float 
     else: 
         test_size = 0.2
 
+    indices = np.arange(len(data))
 
-    """
-    
-    shuffled_indices = np.random.permutation(len(data)) 
-    test_set_size = int(len(data) * test_ratio) 
-    test_indices = shuffled_indices[:test_set_size] 
-    train_indices = shuffled_indices[test_set_size:]
-    return data.iloc[train_indices], data.iloc[test_indices]"""
+    if shuffle:
+        indices = np.random.permutation(len(data)) 
+
+    test_set_size = int(len(data) * test_size)
+    test_indices = indices[:test_set_size]
+    train_indices = indices[test_set_size:]
+    X_train, y_train = data[train_indices][:,:-1], data[train_indices][:,-1] 
+    X_test, y_test = data[test_indices][:,:-1], data[test_indices][:,-1]
+    return (X_train,X_test,y_train,y_test)
 
 

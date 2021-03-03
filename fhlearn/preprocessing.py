@@ -19,3 +19,32 @@ class StandardScaler:
     def transform(self, features: np.array) -> np.array:
         features_copy = np.copy(features)
         return (features_copy - self.mean) / self.std
+
+
+class LabelEncoder:
+    def __init__(self, labels: np.array = None):
+        self.labels = labels
+        self.encoded_labels: dict = None
+        self.has_encoded = False
+
+    def encode(self,labels):
+        unique_labels = sorted(np.unique(labels))
+        self.encoded_labels = {unique_labels[i]:i for i in range(len(unique_labels))}
+        self.has_encoded = True 
+
+    def transform(self, labels):
+        if not self.has_encoded:
+            raise ValueError('LabelEncoder must be encoded before call to transform.')
+        copy = np.copy(labels)
+        for i in range(len(labels)):
+            copy[i] = self.encoded_labels[copy[i]]
+        return copy
+
+    def encode_transform(self,labels):
+        unique_labels = sorted(np.unique(labels))
+        self.encoded_labels = {unique_labels[i]:i for i in range(len(unique_labels))}
+        self.has_encoded = True
+        copy = np.copy(labels)
+        for i in range(len(labels)):
+            copy[i] = self.encoded_labels[copy[i]]
+        return copy

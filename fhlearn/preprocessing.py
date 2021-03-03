@@ -3,8 +3,8 @@ import numpy as np
 
 class StandardScaler:
     def __init__(self):
-        self.mean = None
-        self.std = None
+        self.mean:  float = None
+        self.std: float = None
 
     def fit(self, features: np.array) -> None:
         self.mean = np.mean(features, axis=0)
@@ -23,16 +23,16 @@ class StandardScaler:
 
 class LabelEncoder:
     def __init__(self, labels: np.array = None):
-        self.labels = labels
+        self.labels: np.array = labels
         self.encoded_labels: dict = None
-        self.has_encoded = False
+        self.has_encoded: bool = False
 
-    def encode(self,labels):
+    def encode(self,labels: np.array) -> None:
         unique_labels = sorted(np.unique(labels))
         self.encoded_labels = {unique_labels[i]:i for i in range(len(unique_labels))}
         self.has_encoded = True 
 
-    def transform(self, labels):
+    def transform(self, labels: np.array) -> np.array:
         if not self.has_encoded:
             raise ValueError('LabelEncoder must be encoded before call to transform.')
         copy = np.copy(labels)
@@ -40,7 +40,7 @@ class LabelEncoder:
             copy[i] = self.encoded_labels[copy[i]]
         return copy
 
-    def encode_transform(self,labels):
+    def encode_transform(self,labels: np.array) -> np.array:
         unique_labels = sorted(np.unique(labels))
         self.encoded_labels = {unique_labels[i]:i for i in range(len(unique_labels))}
         self.has_encoded = True

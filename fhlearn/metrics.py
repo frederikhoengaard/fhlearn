@@ -74,6 +74,7 @@ def confusion_matrix(
     Returns confusion matrix with rows as predicted labels and columns as true labels.
 
     Currently requires that n classes be encoded as 0,n-1. Otherwise it will break.
+    Consider using preprocessing.LabelEncoder
     """
 
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
@@ -87,7 +88,7 @@ def confusion_matrix(
     for i in range(len(true_labels)):
         true_label = true_labels[i]
         predicted_label = predicted_labels[i]
-        matrix[predicted_label-1][true_label-1] += 1
+        matrix[predicted_label][true_label] += 1
     return matrix
 
 

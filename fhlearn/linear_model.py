@@ -27,3 +27,18 @@ class LinearRegression: # HML p 106
             raise ValueError('Linear regression model must first be fitted!')
         predicted_targets = self.predict(features)
         return 1 - (sum_squared_residuals(targets,predicted_targets) / sum_squared_errors(targets,predicted_targets))
+
+    
+class LogisticRegression:
+    def __init__(self):
+        self.learning_rate: float = 0.2
+        self.coef_ = None
+
+    def sigmoid_func(self,x):
+        return 1 / (1 + np.exp(-x))
+
+    def fit(self):
+        pass
+
+    def predict(self):
+        pass

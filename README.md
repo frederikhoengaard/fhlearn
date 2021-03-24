@@ -18,6 +18,8 @@ fh-learn is a proprietary machine learning library for developed in Python. It h
 * [DecisionTreeClassifier](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/tree.py)
 * RandomForestClassifier (in development for version 0.2.0)
 
+* [KNeighborsClassifier](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/neighbors.py)
+
 ### Model selection 
 
 * [train_test_split](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/model_selection.py)

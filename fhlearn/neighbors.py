@@ -1,12 +1,8 @@
-# %%
-
 import numpy as np
 from math import sqrt
-from model_selection import train_test_split
 from operator import itemgetter
 import random
 
-# %%
 
 class KNeighborsClassifier:
     def __init__(self, n_neighbors: int = 5, weights='uniform',random_state: int = None):
@@ -75,34 +71,3 @@ class KNeighborsClassifier:
             predictions.append(self._predict_sample(observation))
         return predictions
 
-# %%
-
-def main():
-    data = np.loadtxt('data/iris.csv',delimiter=',')
-
-    X,y = data[:,:-1], data[:,-1]
-
-    for i in range(10):
-        X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2)
-
-        knn = KNeighborsClassifier()
-
-        knn.fit(X_train,y_train)
-
-
-        y_pred = knn.predict(X_test)
-
-
-
-        import sklearn.neighbors
-
-        sknn = sklearn.neighbors.KNeighborsClassifier(n_neighbors=5)
-        sknn.fit(X_train,y_train)
-        y_pred_sk = sknn.predict(X_test)
-
-        print('fhlearn-sklearn diff')
-        print(y_pred-y_pred_sk)
-
-if __name__ == '__main__':
-    main()
-# %%

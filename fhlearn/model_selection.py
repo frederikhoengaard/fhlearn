@@ -23,7 +23,7 @@ def train_test_split(
         train_size: float = None, 
         random_state: int = None, 
         shuffle: bool = True, 
-        tratify: bool = False
+        stratify: bool = False
     ) -> list:
     if targets is not None:
         if np.shape(data)[0] == np.shape(targets)[0]:

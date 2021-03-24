@@ -26,7 +26,7 @@ def train_test_split(
         stratify: bool = False
     ) -> list:
     if targets is not None:
-        if np.shape(data)[0] == np.shape(targets)[0]:
+        if np.size(data, axis=0) == np.size(targets, axis=0):
             data = np.c_[data,targets]
         else:
             raise ValueError('Feature and target arrays not containing equal number of samples.')

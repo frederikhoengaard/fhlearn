@@ -1,21 +1,18 @@
 # %%
 
 import numpy as np
-# %%
 from model_selection import train_test_split
-# load some data
-
-data = np.loadtxt('data/wine.csv',delimiter=',')
-#X_train,X_test,y_train,y_test = train_test_split(data)
-X_train = data[:,:-1]
-y_train = data[:,-1]
+from operator import itemgetter
 # %%
+
+
 
 class LinearDiscriminantAnalysis:
     def __init__(self,solver='eigen'):
         self.solver = solver
         self.n_features: int = None
         self.n_classes: int = None
+        self.X_lda = None
 
     def _get_n_classes(self, labels: np.array):
         return len(np.unique(labels))
@@ -76,6 +73,22 @@ class LinearDiscriminantAnalysis:
         problem = Sw_inv @ between_class_scatter_matrix
         return np.linalg.eig(problem)
 
+    def _discriminant_function(
+            self, 
+            x, 
+            class_probabilities, 
+            covariance_matrix, 
+            class_mean
+        ):
+        a_k = (2 * np.log(class_probabilities) - np.log(np.linalg.det(covariance_matrix)) 
+              - class_mean.T @ np.linalg.inv(covariance_matrix) @ class_mean)
+        b_k = 2 * class_mean.T @ np.linalg.inv(covariance_matrix) 
+
+        return a_k + b_k.T @ x
+
+    def explained_variance_ratio(self,n_components):
+        pass
+
     def fit(self,features: np.array, labels: np.array):
         self.n_features = np.size(features, 1)
         self.n_classes = self._get_n_classes(labels)
@@ -85,13 +98,64 @@ class LinearDiscriminantAnalysis:
         Sb = self._get_between_scatter_matrix(features, labels)
         eigen_values, eigen_vectors = self._get_eigen(Sw,Sb)
         pairs = [(np.abs(eigen_values[i]), eigen_vectors[:,i]) for i in range(len(eigen_values))]
-        pairs = sorted(pairs, key=lambda x: x[0], reverse=True)
+        pairs = sorted(pairs, key=itemgetter(0),reverse=True)
         for pair in pairs:
             print(pair[0])
 
+        print(sum(eigen_values))
+
+    def transform(self):
+        pass
+
+    def fit_transform(self):
+        pass
+
+    def predict(self):
+        pass
+
+
+
+
+
+class QuadraticDiscriminantAnalysis:
+    def __init__(self,solver='eigen'):
+        self.solver = solver
+        self.n_features: int = None
+        self.n_classes: int = None
+        self.X_lda = None
+
+    def _discriminant_function(
+            self, 
+            x, 
+            class_probabilities, 
+            covariance_matrix, 
+            class_mean
+        ):
+        a_k = (2 * np.log(class_probabilities) - np.log(np.linalg.det(covariance_matrix)) 
+              - class_mean.T @ np.linalg.inv(covariance_matrix) @ class_mean)
+        b_k = 2 * class_mean.T @ np.linalg.inv(covariance_matrix) 
+        c_k = - np.linalg.inv(covariance_matrix)
+
+        return a_k + b_k.T @ x + x.T @ c_k @ x
+
+    def transform(self):
+        pass
+
+    def fit_transform(self):
+        pass
+
+    def predict(self):
+        pass
+
+# %%
+
+
+data = np.loadtxt('data/wine.csv',delimiter=',')
+#X_train,X_test,y_train,y_test = train_test_split(data)
+X_train = data[:,:-1]
+y_train = data[:,-1]
 
 lda = LinearDiscriminantAnalysis()
 
 lda.fit(X_train,y_train)
-
 # %%

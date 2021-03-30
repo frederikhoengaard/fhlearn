@@ -13,6 +13,8 @@ class LinearDiscriminantAnalysis:
         self.n_features: int = None
         self.n_classes: int = None
         self.X_lda = None
+        self.w_matrix = None
+        self.is_fitted = None
 
     def _get_n_classes(self, labels: np.array):
         return len(np.unique(labels))
@@ -54,7 +56,6 @@ class LinearDiscriminantAnalysis:
         Sb = np.zeros((self.n_features,self.n_features))
         class_means = self._class_feature_means(features,labels)
         feature_means = np.mean(features, axis=0)
-
         for class_ in range(self.n_classes):
             data = features[labels == class_]
             n = self._get_n_obs(data)
@@ -69,7 +70,6 @@ class LinearDiscriminantAnalysis:
             between_class_scatter_matrix: np.array
         ):
         Sw_inv = np.linalg.inv(within_class_scatter_matrix)
-        
         problem = Sw_inv @ between_class_scatter_matrix
         return np.linalg.eig(problem)
 
@@ -83,7 +83,6 @@ class LinearDiscriminantAnalysis:
         a_k = (2 * np.log(class_probabilities) - np.log(np.linalg.det(covariance_matrix)) 
               - class_mean.T @ np.linalg.inv(covariance_matrix) @ class_mean)
         b_k = 2 * class_mean.T @ np.linalg.inv(covariance_matrix) 
-
         return a_k + b_k.T @ x
 
     def explained_variance_ratio(self,n_components):
@@ -92,23 +91,23 @@ class LinearDiscriminantAnalysis:
     def fit(self,features: np.array, labels: np.array):
         self.n_features = np.size(features, 1)
         self.n_classes = self._get_n_classes(labels)
-        
-
         Sw = self._get_within_scatter_matrix(features,labels)
         Sb = self._get_between_scatter_matrix(features, labels)
         eigen_values, eigen_vectors = self._get_eigen(Sw,Sb)
         pairs = [(np.abs(eigen_values[i]), eigen_vectors[:,i]) for i in range(len(eigen_values))]
         pairs = sorted(pairs, key=itemgetter(0),reverse=True)
-        for pair in pairs:
-            print(pair[0])
+        self.w_matrix = np.hstack((pairs[0][1].reshape(self.n_features,1), pairs[1][1].reshape(self.n_features,1))).real
+        self.is_fitted = True
 
-        print(sum(eigen_values))
+    def transform(self, features):
+        if not self.is_fitted:
+            raise ValueError()
+        return features @ self.w_matrix
 
-    def transform(self):
-        pass
-
-    def fit_transform(self):
-        pass
+    def fit_transform(self, features, labels):
+        self.fit(features,labels)
+        X_lda = self.transform(features)
+        return X_lda
 
     def predict(self):
         pass
@@ -123,6 +122,7 @@ class QuadraticDiscriminantAnalysis:
         self.n_features: int = None
         self.n_classes: int = None
         self.X_lda = None
+        self.w_matrix = None
 
     def _discriminant_function(
             self, 
@@ -158,4 +158,5 @@ y_train = data[:,-1]
 lda = LinearDiscriminantAnalysis()
 
 lda.fit(X_train,y_train)
+print(lda.transform(X_train))
 # %%

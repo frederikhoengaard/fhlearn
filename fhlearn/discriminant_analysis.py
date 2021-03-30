@@ -3,8 +3,6 @@
 import numpy as np
 from model_selection import train_test_split
 from operator import itemgetter
-# %%
-
 
 
 class LinearDiscriminantAnalysis:
@@ -61,7 +59,6 @@ class LinearDiscriminantAnalysis:
             n = self._get_n_obs(data)
             mc, m = np.reshape(class_means[:,class_], (-1,1)), np.reshape(feature_means, (-1,1))
             Sb += n * (mc - m) @ ((mc - m).T)
-
         return Sb
 
     def _get_eigen(
@@ -89,7 +86,7 @@ class LinearDiscriminantAnalysis:
         pass
 
     def fit(self,features: np.array, labels: np.array):
-        self.n_features = np.size(features, 1)
+        self.n_features = np.size(features, axis=1)
         self.n_classes = self._get_n_classes(labels)
         Sw = self._get_within_scatter_matrix(features,labels)
         Sb = self._get_between_scatter_matrix(features, labels)
@@ -109,7 +106,7 @@ class LinearDiscriminantAnalysis:
         X_lda = self.transform(features)
         return X_lda
 
-    def predict(self):
+    def predict(self, features):
         pass
 
 

@@ -9,7 +9,7 @@ fh-learn is a proprietary machine learning library for developed in Python. It h
 
 ### Models
 
-* [LinearRegression](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/linear_model.py) (in development for version 0.2.0)
+* [LinearRegression](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/linear_model.py) 
 * LogisticRegression (in development for version 0.3.0)
 
 * LinearDiscriminantAnalysis (in development for version 0.3.0)

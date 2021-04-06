@@ -9,23 +9,23 @@ fh-learn is a proprietary machine learning library for developed in Python. It h
 
 ### Models
 
-* [LinearRegression](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/linear_model.py) 
+* [LinearRegression](https://github.com/frederikhoengaard/fhlearn/blob/main/fhlearn/linear_model.py) 
 * LogisticRegression (in development for version 0.3.0)
 
 * LinearDiscriminantAnalysis (in development for version 0.3.0)
 * QuadraticDiscriminantAnalysis (in development for version 0.3.0)
 
-* [DecisionTreeClassifier](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/tree.py)
+* [DecisionTreeClassifier](https://github.com/frederikhoengaard/fhlearn/blob/main/fhlearn/tree.py)
 * RandomForestClassifier (in development for version 0.3.0)
 
-* [KNeighborsClassifier](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/neighbors.py)
+* [KNeighborsClassifier](https://github.com/frederikhoengaard/fhlearn/blob/main/fhlearn/neighbors.py)
 
 ### Model selection 
 
-* [train_test_split](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/model_selection.py)
+* [train_test_split](https://github.com/frederikhoengaard/fhlearn/blob/main/fhlearn/model_selection.py)
 
 ### Pre-processing
-* [StandardScaler](https://github.com/frederikhoengaard/fhlearn/blob/0.2.0/fhlearn/preprocessing.py)
+* [StandardScaler](https://github.com/frederikhoengaard/fhlearn/blob/main/fhlearn/preprocessing.py)
 
 ### Metrics
 

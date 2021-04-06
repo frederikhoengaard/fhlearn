@@ -1,57 +1,45 @@
 import numpy as np
 
 
-
 def accuracy_score(
         true_labels,
         predicted_labels,
         normalize: bool = True,
     ) -> float:   
-    
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
-
     if n_samples_true != n_samples_predicted:
         raise ValueError()
-
     n_correct_predictions = 0
-
     for i in range(len(true_labels)):
         if  true_labels[i] == predicted_labels[i]:
             n_correct_predictions += 1
-
     if normalize:
         return n_correct_predictions / n_samples_true
     else:
         return n_correct_predictions
 
 
-
 def _get_class_weights(labels) -> dict:
     classes = set(labels)
     class_weights = {}
     class_counts = {}
-
     for value in labels:
         if value not in class_counts:
             class_counts[value] = 1
         else:
             class_counts[value] += 1
-
     for class_ in classes:
         class_weights[class_] = class_counts[class_] / len(labels)
     return class_weights
-
 
 
 def _compute_positives_and_negatives(
         true_labels,
         predicted_labels
     ) -> dict:
-
     classes = set(true_labels)
     records = {}
     weights = _get_class_weights(true_labels)
-
     for class_ in classes:
         true_positives, false_positives, true_negatives, false_negatives = 0, 0, 0, 0
         for i in range(len(true_labels)):
@@ -69,29 +57,26 @@ def _compute_positives_and_negatives(
     return records
 
 
-
 def confusion_matrix(
         true_labels,
         predicted_labels
     ) -> np.array:
     """
-    Returns confusion matrix with rows as predicted labels and columns as true labels
+    Returns confusion matrix with rows as predicted labels and columns as true labels.
+
+    Currently requires that n classes be encoded as 0,n-1. Otherwise it will break.
+    Consider using preprocessing.LabelEncoder
     """
-
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
-
     if n_samples_true != n_samples_predicted:
         raise ValueError()
-
     n_classes = len(set(true_labels))
     matrix = np.zeros((n_classes,n_classes))
-    
     for i in range(len(true_labels)):
         true_label = true_labels[i]
         predicted_label = predicted_labels[i]
-        matrix[predicted_label-1][true_label-1] += 1
+        matrix[predicted_label][true_label] += 1
     return matrix
-
 
 
 def precision_score(
@@ -100,16 +85,12 @@ def precision_score(
         average=None,
         zero_division=0
     ):
-
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
-
     if n_samples_true != n_samples_predicted:
         raise ValueError()
-
     records = _compute_positives_and_negatives(true_labels,predicted_labels)
     classes = records.keys()
     precision_dict = {}
-
     for class_ in classes:
         tp, fp = records[class_]['tp'], records[class_]['fp']
         sum_positives = tp + fp
@@ -117,7 +98,6 @@ def precision_score(
             precision_dict[class_] = zero_division
         else:
             precision_dict[class_] = tp / sum_positives
-    
     if not average:
         return precision_dict # class-specific precision
     else:
@@ -138,23 +118,18 @@ def precision_score(
             raise ValueError('Invalid argument for the "average" keyword parameter')
 
 
-
 def recall_score(
         true_labels,
         predicted_labels,
         average=None,
         zero_division=0
     ):
-
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
-
     if n_samples_true != n_samples_predicted:
         raise ValueError()
-
     records = _compute_positives_and_negatives(true_labels,predicted_labels)
     classes = records.keys()
     recall_dict = {}
-
     for class_ in classes:
         tp, fn = records[class_]['tp'], records[class_]['fn']
         potential_positives = tp + fn
@@ -162,7 +137,6 @@ def recall_score(
             recall_dict[class_] = zero_division
         else:
             recall_dict[class_] = tp / potential_positives
-
     if not average:
         return recall_dict
     else:
@@ -183,31 +157,25 @@ def recall_score(
             raise ValueError('Invalid argument for the "average" keyword parameter')
 
 
-
 def f1_score(
         true_labels,
         predicted_labels,
         average=None,
         zero_division=0
     ):
-
     n_samples_true, n_samples_predicted = len(true_labels), len(predicted_labels)
-
     if n_samples_true != n_samples_predicted:
         raise ValueError()
-
     precision = precision_score(true_labels,predicted_labels,zero_division=zero_division)
     recall = recall_score(true_labels,predicted_labels,zero_division=zero_division)
     weights = _get_class_weights(true_labels)
-    f1_dict = {}
-    
+    f1_dict = {}  
     for class_ in precision.keys():
         sum_recall_precision = precision[class_] + recall[class_]
         if sum_recall_precision == 0:
             f1_dict[class_] = zero_division
         else:
             f1_dict[class_] = 2 * (precision[class_] * recall[class_]) / sum_recall_precision
-    
     if not average:
         return f1_dict
     else:
@@ -226,3 +194,30 @@ def f1_score(
             return sum_scores
         else:
             raise ValueError('Invalid argument for the "average" keyword parameter')
+
+
+def sum_squared_errors(true_targets: np.array, predicted_targets: np.array):
+    if not np.shape(true_targets) == np.shape(predicted_targets):
+        raise ValueError('Input arrays not of equal dimensions')
+    return np.sum((true_targets - np.mean(true_targets)) ** 2)
+
+
+def sum_squared_residuals(true_targets: np.array, predicted_targets: np.array):
+    if not np.shape(true_targets) == np.shape(predicted_targets):
+        raise ValueError('Input arrays not of equal dimensions')
+    return np.sum((true_targets - predicted_targets) ** 2)
+
+
+def mean_squared_error(true_targets: np.array, predicted_targets: np.array, squared=True):
+    if not np.shape(true_targets) == np.shape(predicted_targets):
+        raise ValueError('Input arrays not of equal dimensions')
+    if squared:
+        return np.mean((true_targets - predicted_targets) ** 2) 
+    else:
+        return np.mean(true_targets - predicted_targets) 
+
+
+def r2_score(true_targets: np.array, predicted_targets: np.array) -> float:
+    if not np.shape(true_targets) == np.shape(predicted_targets):
+        raise ValueError('Input arrays not of equal dimensions')
+    return 1 - (sum_squared_residuals(true_targets,predicted_targets) / sum_squared_errors(true_targets,predicted_targets))

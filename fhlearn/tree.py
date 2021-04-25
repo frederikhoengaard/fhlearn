@@ -180,7 +180,7 @@ class DecisionTreeClassifier:
             return True
         return False
 
-    def _decide_if_leaf(self, node):
+    def _decide_if_leaf(self, node: Node) -> bool:
         if not self._passes_hyperparameters(node):
             return True
         return False
@@ -230,7 +230,7 @@ class DecisionTreeClassifier:
             self,
             sample: np.array, 
             node: Node
-        ):
+        ) -> int:
         if node.is_leaf:
             return node.majority_class
         else:

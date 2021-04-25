@@ -30,7 +30,16 @@ class LinearRegression: # HML p 106
 
     
 class LogisticRegression:
-    def __init__(self):
+    def __init__(
+            self, 
+            penalty: str = 'l2', 
+            tol: float = 0.0001,
+            max_iter: int = 100, 
+            multi_class: str = 'auto'
+        ):
+        self.penalty = penalty
+        self.tolerance = tol
+        self.max_itereations_for_convergence = max_iter
         self.learning_rate: float = 0.2
         self.coef_ = None
 
@@ -55,7 +64,7 @@ class LogisticRegression:
 def main():
 
 
-    pass
+    clf = LogisticRegression()
 
 if __name__ == '__main__':
     main()

@@ -34,11 +34,28 @@ class LogisticRegression:
         self.learning_rate: float = 0.2
         self.coef_ = None
 
-    def sigmoid_func(self,x):
+    def _sigmoid_func(self,x):
         return 1 / (1 + np.exp(-x))
 
-    def fit(self):
+    def _hypothesis(self, sample, theta):
+        return self._sigmoid_func(sample @ theta)
+
+    def _cost(self):
         pass
+
+    def fit(self):
+        if not self.coef_: # initialise thetas
+            np.random.seed(42) 
+            self.coef_ = np.random.uniform(-1,1,m+1)
 
     def predict(self):
         pass
+
+
+def main():
+
+
+    pass
+
+if __name__ == '__main__':
+    main()

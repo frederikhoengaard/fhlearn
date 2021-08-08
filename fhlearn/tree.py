@@ -123,9 +123,9 @@ class DecisionTreeClassifier:
     
     def _find_next_feature_val(
             self,
-            features,
-            feature_index,
-            val
+            features: np.array,
+            feature_index: int,
+            val: float
         ) -> float:
         relevant_features = features[:,feature_index]
         relevant_features.sort()

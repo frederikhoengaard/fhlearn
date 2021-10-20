@@ -49,13 +49,27 @@ class LogisticRegression:
     def _hypothesis(self, sample, theta):
         return self._sigmoid_func(sample @ theta)
 
-    def _cost(self):
-        pass
+    def _cost(self,X,y):
+        n,m = X.shape
+        y_hat = self._hypothesis(X,self.coef_)
+        return -(1/n)* (y @ np.log(y_hat) + (1-y) @ np.log(1-y_hat))
 
-    def fit(self):
+    def _GD(self,features,labels,lr=1e-3):
+        loss = []
+        for _ in range(self.max_itereations_for_convergence):
+            self.coef_ -= lr * features.T @ (self._hypothesis(features,self.coef_) - labels)
+            print(self.coef_)
+            loss.append(self._cost(features,labels))
+
+    def fit(self,features,labels):
+        n,m = features.shape
+        X = np.ones((n,m+1))
+        X[:,:-1] = features
+
         if not self.coef_: # initialise thetas
             np.random.seed(42) 
             self.coef_ = np.random.uniform(-1,1,m+1)
+        self._GD(X,labels)
 
     def predict(self):
         pass
@@ -65,6 +79,13 @@ def main():
 
 
     clf = LogisticRegression()
+    from sklearn.datasets import load_iris
+
+    iris = load_iris()
+    features = iris.data
+    labels = iris.target
+   # print(features,labels)
+    clf.fit(features,labels)
 
 if __name__ == '__main__':
     main()
